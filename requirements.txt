@@ -1,0 +1,6 @@
+setuptools~=52.0.0
+
+# Development
+tox~=3.23.0
+pytest~=6.2.2
+pytest-cov~=2.11.1

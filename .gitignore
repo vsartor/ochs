@@ -1,0 +1,9 @@
+*.egg-info
+dist
+__pycache__
+.mypy_cache
+.tox
+.pytest_cache
+htmlcov
+.coverage
+coverage.xml
