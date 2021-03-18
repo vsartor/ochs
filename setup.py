@@ -21,4 +21,8 @@ setuptools.setup(
         "Topic :: Internet",
         "Typing :: Typed",
     ],
+    entry_points="""
+        [console_scripts]
+        ochs=ochs.cli:ochs
+    """,
 )
