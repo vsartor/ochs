@@ -1,6 +1,10 @@
-setuptools~=52.0.0
-
 # Development
+setuptools~=52.0.0
+mypy~=0.812
+isort~=5.7.0
+black~=20.8
+
+# Tests
 tox~=3.23.0
 pytest~=6.2.2
 pytest-cov~=2.11.1
