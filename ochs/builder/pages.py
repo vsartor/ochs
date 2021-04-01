@@ -4,8 +4,8 @@ from typing import NamedTuple
 from ochs.builder.page import Page
 from ochs.builder.templates import get_template
 from ochs.builder.variables import apply_global_variables, apply_variables
-from ochs.utils.fs import read_yaml, write
 from ochs.utils import log
+from ochs.utils.fs import read_yaml, write
 
 
 class PageSpec(NamedTuple):

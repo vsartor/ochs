@@ -3,8 +3,8 @@ import shutil
 
 from ochs.builder.pages import build_pages
 from ochs.builder.posts import build_posts
-from ochs.utils.fs import is_or_mkdir
 from ochs.utils import log
+from ochs.utils.fs import is_or_mkdir
 
 
 def compile_source(source_dir: str, target_dir: str) -> bool:

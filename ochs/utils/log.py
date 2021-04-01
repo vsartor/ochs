@@ -14,9 +14,7 @@ def setup_logger(debug: bool) -> None:
 
     logging_level = logging.DEBUG if debug else logging.INFO
 
-    formatter = logging.Formatter(
-        "[\u001b[1m%(levelname)-7s\u001b[0m] - %(message)s"
-    )
+    formatter = logging.Formatter("[\u001b[1m%(levelname)-7s\u001b[0m] - %(message)s")
 
     console_handler = logging.StreamHandler(stream=sys.stdout)
     console_handler.setLevel(logging_level)

@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
-from ochs.utils.fs import write
 from ochs.utils import log
+from ochs.utils.fs import write
 
 
 class Page(NamedTuple):

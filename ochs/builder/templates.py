@@ -1,8 +1,8 @@
 import re
 from functools import lru_cache
 
-from ochs.utils.fs import read
 from ochs.utils import log
+from ochs.utils.fs import read
 
 
 @lru_cache(maxsize=None)
