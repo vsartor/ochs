@@ -1,7 +1,7 @@
 import click
 
 from ochs.builder.compiler import compile_source
-from ochs.utils.logging import setup_logger
+from ochs.utils.log import setup_logger
 
 
 @click.group()

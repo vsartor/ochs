@@ -2,13 +2,12 @@ import re
 from functools import lru_cache
 
 from ochs.utils.fs import read
-from ochs.utils.logging import logger
-from ochs.utils.term import bold
+from ochs.utils import log
 
 
 @lru_cache(maxsize=None)
 def get_template(source_dir: str, template_name: str) -> str:
-    logger().info(f"Loading template '{bold(template_name)}' from disk.")
+    log.info(f"Loading template '{template_name}' from disk.")
     content = read(f"{source_dir}/templates/{template_name}.html")
 
     sub_templates = {name[2:][:-1] for name in re.findall(r"\$\{[a-zA-Z-]+\}", content)}

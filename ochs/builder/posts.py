@@ -3,11 +3,11 @@ from datetime import date
 from functools import lru_cache
 from typing import NamedTuple
 
+from ochs.utils import log
+from ochs.builder.page import Page
 from ochs.builder.templates import get_template
 from ochs.builder.variables import apply_global_variables
 from ochs.utils.fs import read_md, read_yaml, write
-from ochs.utils.logging import logger
-from ochs.utils.term import bold
 
 
 class PostSpec(NamedTuple):
@@ -22,11 +22,6 @@ class PostSpec(NamedTuple):
 class Post(NamedTuple):
     spec: PostSpec
     preview: str
-    content: str
-
-
-class PostPage(NamedTuple):
-    url: str
     content: str
 
 
@@ -46,7 +41,7 @@ def load_specs(source_dir: str) -> list[PostSpec]:
 
 
 def load_post(spec: PostSpec, source_dir: str) -> Post:
-    logger().info(f"Reading post '{bold(spec.name)}.md'.")
+    log.info(f"Reading post '{spec.name}.md'.")
     return Post(
         spec=spec,
         preview=read_md(f"{source_dir}/previews/{spec.name}.md"),
@@ -54,11 +49,11 @@ def load_post(spec: PostSpec, source_dir: str) -> Post:
     )
 
 
-def load_post_page(post: Post, source_dir: str) -> PostPage:
+def load_post_page(post: Post, source_dir: str) -> Page:
     content = get_template(source_dir, post.spec.template)
     content = apply_global_variables(content, source_dir)
     content = apply_post_variables(content, post)
-    return PostPage(url=post.spec.url, content=content)
+    return Page(url=f"posts/{post.spec.url}", content=content)
 
 
 def apply_post_variables(content: str, post: Post) -> str:
@@ -82,5 +77,4 @@ def build_posts(source_dir: str, target_dir: str) -> None:
     pages = [load_post_page(post, source_dir) for post in posts]
 
     for page in pages:
-        logger().info(f"Writing post page '{bold(page.url)}'.")
-        write(f"{target_dir}/posts/{page.url}", page.content)
+        page.write(target_dir)

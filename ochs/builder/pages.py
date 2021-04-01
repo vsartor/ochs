@@ -1,22 +1,17 @@
 from functools import lru_cache
 from typing import NamedTuple
 
+from ochs.builder.page import Page
 from ochs.builder.templates import get_template
 from ochs.builder.variables import apply_global_variables, apply_variables
 from ochs.utils.fs import read_yaml, write
-from ochs.utils.logging import logger
-from ochs.utils.term import bold
+from ochs.utils import log
 
 
 class PageSpec(NamedTuple):
     template: str
     url: str
     variables: dict[str, str]
-
-
-class Page(NamedTuple):
-    url: str
-    content: str
 
 
 @lru_cache(maxsize=None)
@@ -43,5 +38,4 @@ def build_pages(source_dir: str, target_dir: str) -> None:
     pages = [load_page(source_dir, spec) for spec in specs]
 
     for page in pages:
-        logger().info(f"Writing page '{bold(page.url)}'.")
-        write(f"{target_dir}/{page.url}", page.content)
+        page.write(target_dir)
