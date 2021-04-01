@@ -3,6 +3,28 @@
 
 import os
 
+import markdown
+import yaml
+
+
+def read(path: str) -> str:
+    with open(path, "r") as f:
+        return f.read()
+
+
+def read_md(path: str) -> str:
+    return markdown.markdown(read(path), extensions=["extra", "mdx_math"])
+
+
+def read_yaml(path: str) -> dict:
+    with open(path, "r") as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+
+def write(path: str, content: str) -> None:
+    with open(path, "w") as f:
+        f.write(content)
+
 
 def is_or_mkdir(path: str) -> bool:
     """
