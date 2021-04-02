@@ -7,12 +7,8 @@ from typing import Optional
 from ochs.utils.term import bold
 
 
-def setup_logger(debug: bool) -> None:
-    """
-    Sets the configuration for the logging parameter.
-    """
-
-    logging_level = logging.DEBUG if debug else logging.INFO
+def setup_logger(silent: bool) -> None:
+    logging_level = logging.WARNING if silent else logging.INFO
 
     formatter = logging.Formatter("[\u001b[1m%(levelname)-7s\u001b[0m] - %(message)s")
 

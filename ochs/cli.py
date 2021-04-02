@@ -5,9 +5,9 @@ from ochs.utils.log import setup_logger
 
 
 @click.group()
-@click.option("--debug/--no-debug", default=False)
-def ochs(debug: bool) -> None:
-    setup_logger(debug)
+@click.option("--silent/--no-silent", default=False)
+def ochs(silent: bool) -> None:
+    setup_logger(silent)
 
 
 @ochs.command()
