@@ -27,7 +27,7 @@ class Post(NamedTuple):
 
 @lru_cache(maxsize=None)
 def load_specs(source_dir: str) -> list[PostSpec]:
-    return [
+    specs = [
         PostSpec(
             name=raw_spec["post"],
             template=raw_spec["template"],
@@ -39,7 +39,10 @@ def load_specs(source_dir: str) -> list[PostSpec]:
         for raw_spec in read_yaml(f"{source_dir}/posts.yaml")
     ]
 
+    return sorted(specs, key=lambda spec: spec.date, reverse=True)
 
+
+@lru_cache(maxsize=None)
 def load_post(spec: PostSpec, source_dir: str) -> Post:
     log.info(f"Reading post '{spec.name}.md'.")
     return Post(
@@ -49,11 +52,39 @@ def load_post(spec: PostSpec, source_dir: str) -> Post:
     )
 
 
-def load_post_page(post: Post, source_dir: str) -> Page:
+def get_page(post: Post, source_dir: str) -> Page:
     content = get_template(source_dir, post.spec.template)
     content = apply_global_variables(content, source_dir)
     content = apply_post_variables(content, post)
     return Page(url=f"posts/{post.spec.url}", content=content)
+
+
+def expand_post_block(content: str, source_dir: str) -> str:
+    # Determine where block starts and ends
+    start_location = content.find("#{post-start}")
+    end_location = content.find("#{post-end}") + len("#{post-end}")
+    if start_location == -1 or end_location == -1:
+        return content
+
+    # Separate content above and below block for later use
+    content_above_block = content[:start_location]
+    content_below_block = content[end_location:]
+
+    raw_block = content[start_location:end_location]
+    block_lines = raw_block.splitlines()
+
+    # Get repeat count and block without stard/end delimiters
+    count = int(re.findall("[0-9]+", block_lines[0])[0])
+    block = "\n".join(block_lines[1:-1])
+
+    # Create expanded content
+    expanded_content = content_above_block
+    for spec in load_specs(source_dir)[:count]:
+        post = load_post(spec, source_dir)
+        expanded_content += apply_post_variables(block, post)
+    expanded_content += content_below_block
+
+    return expanded_content
 
 
 def apply_post_variables(content: str, post: Post) -> str:
@@ -74,7 +105,7 @@ def apply_post_variables(content: str, post: Post) -> str:
 def build_posts(source_dir: str, target_dir: str) -> None:
     specs = load_specs(source_dir)
     posts = [load_post(spec, source_dir) for spec in specs]
-    pages = [load_post_page(post, source_dir) for post in posts]
+    pages = [get_page(post, source_dir) for post in posts]
 
     for page in pages:
         page.write(target_dir)
