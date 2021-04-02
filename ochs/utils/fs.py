@@ -18,7 +18,7 @@ def read_md(path: str) -> str:
 
 def read_yaml(path: str) -> dict:
     with open(path, "r") as f:
-        return yaml.load(f, Loader=yaml.FullLoader)
+        return yaml.safe_load(f)
 
 
 def write(path: str, content: str) -> None:

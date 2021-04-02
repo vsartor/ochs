@@ -29,9 +29,9 @@ def load_specs(source_dir: str) -> list[PageSpec]:
 
 def load_page(source_dir: str, spec: PageSpec) -> Page:
     content = get_template(source_dir, spec.template)
+    content = expand_post_block(content, source_dir)
     content = apply_global_variables(content, source_dir)
     content = apply_variables(content, spec.variables)
-    content = expand_post_block(content, source_dir)
     return Page(url=spec.url, content=content)
 
 

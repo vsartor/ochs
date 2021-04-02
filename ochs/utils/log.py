@@ -41,7 +41,10 @@ def error(message: str, highlight_delim: Optional[str] = "'") -> None:
     logger().error(highlight(message, highlight_delim))
 
 
-def highlight(message: str, delim: str) -> str:
+def highlight(message: str, delim: Optional[str] = None) -> str:
+    if not delim:
+        return message
+
     matches = set(re.findall(f"{delim}.+{delim}", message))
     for match in matches:
         message = message.replace(match, bold(match))

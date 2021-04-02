@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 from ochs.builder.page import Page
 from ochs.builder.templates import get_template
-from ochs.builder.variables import apply_global_variables
+from ochs.builder.variables import apply_global_variables, apply_variables
 from ochs.utils import log
 from ochs.utils.fs import read_md, read_yaml, write
 
@@ -17,6 +17,10 @@ class PostSpec(NamedTuple):
     author: str
     date: date
     url: str
+    variables: dict[str, str]
+
+    def __hash__(self) -> int:
+        return hash(self.name)
 
 
 class Post(NamedTuple):
@@ -34,7 +38,8 @@ def load_specs(source_dir: str) -> list[PostSpec]:
             title=raw_spec["title"],
             author=raw_spec["author"],
             date=date.fromisoformat(raw_spec["date"]),
-            url=raw_spec["url"],
+            url=f"posts/{raw_spec['url']}",
+            variables=raw_spec["variables"],
         )
         for raw_spec in read_yaml(f"{source_dir}/posts.yaml")
     ]
@@ -54,9 +59,10 @@ def load_post(spec: PostSpec, source_dir: str) -> Post:
 
 def get_page(post: Post, source_dir: str) -> Page:
     content = get_template(source_dir, post.spec.template)
-    content = apply_global_variables(content, source_dir)
     content = apply_post_variables(content, post)
-    return Page(url=f"posts/{post.spec.url}", content=content)
+    content = apply_global_variables(content, source_dir)
+    content = apply_variables(content, post.spec.variables)
+    return Page(url=post.spec.url, content=content)
 
 
 def expand_post_block(content: str, source_dir: str) -> str:

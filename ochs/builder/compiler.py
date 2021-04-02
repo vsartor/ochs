@@ -18,7 +18,6 @@ def compile_source(source_dir: str, target_dir: str) -> bool:
     build_pages(source_dir, target_dir)
     build_posts(source_dir, target_dir)
 
-    log.error("Full compilation not yet implemented.")
     return True
 
 
