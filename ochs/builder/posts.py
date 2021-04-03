@@ -17,6 +17,7 @@ class PostSpec(NamedTuple):
     author: str
     date: date
     url: str
+    unlisted: bool
     variables: dict[str, str]
 
     def __hash__(self) -> int:
@@ -38,7 +39,8 @@ def load_specs(source_dir: str) -> list[PostSpec]:
             title=raw_spec["title"],
             author=raw_spec["author"],
             date=date.fromisoformat(raw_spec["date"]),
-            url=f"posts/{raw_spec['url']}",
+            url=raw_spec["url"] if "unlisted" in raw_spec else f"posts/{raw_spec['url']}",
+            unlisted="unlisted" in raw_spec,
             variables=raw_spec["variables"],
         )
         for raw_spec in read_yaml(f"{source_dir}/posts.yaml")
@@ -83,9 +85,12 @@ def expand_post_block(content: str, source_dir: str) -> str:
     count = int(re.findall("[0-9]+", block_lines[0])[0])
     block = "\n".join(block_lines[1:-1])
 
+    # Get eligible posts
+    specs = [spec for spec in load_specs(source_dir) if not spec.unlisted]
+
     # Create expanded content
     expanded_content = content_above_block
-    for spec in load_specs(source_dir)[:count]:
+    for spec in specs[:count]:
         post = load_post(spec, source_dir)
         expanded_content += apply_post_variables(block, post)
     expanded_content += content_below_block
