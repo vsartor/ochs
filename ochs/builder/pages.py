@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import NamedTuple
 
 from ochs.builder.page import Page
-from ochs.builder.posts import expand_post_block
+from ochs.builder.posts import expand_post_block, expand_post_information
 from ochs.builder.templates import get_template
 from ochs.builder.variables import apply_global_variables, apply_variables
 from ochs.utils import log
@@ -30,6 +30,7 @@ def load_specs(source_dir: str) -> list[PageSpec]:
 def load_page(source_dir: str, spec: PageSpec) -> Page:
     content = get_template(source_dir, spec.template)
     content = expand_post_block(content, source_dir)
+    content = expand_post_information(content, source_dir)
     content = apply_global_variables(content, source_dir)
     content = apply_variables(content, spec.variables)
     return Page(url=spec.url, content=content)

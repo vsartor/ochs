@@ -50,6 +50,11 @@ def load_specs(source_dir: str) -> list[PostSpec]:
 
 
 @lru_cache(maxsize=None)
+def load_specs_dict(source_dir: str) -> dict[str, PostSpec]:
+    return {spec.name: spec for spec in load_specs(source_dir)}
+
+
+@lru_cache(maxsize=None)
 def load_post(spec: PostSpec, source_dir: str) -> Post:
     log.info(f"Reading post '{spec.name}.md'.")
     return Post(
@@ -67,10 +72,36 @@ def get_page(post: Post, source_dir: str) -> Page:
     return Page(url=post.spec.url, content=content)
 
 
-def expand_post_block(content: str, source_dir: str) -> str:
-    # Determine where block starts and ends
+def expand_post_information(content: str, source_dir: str) -> str:
+    # Find a post-start and post-end, and clean them. This function
+    # is recursive, substituting one at a time.
+
     start_location = content.find("#{post-start}")
     end_location = content.find("#{post-end}") + len("#{post-end}")
+    if start_location == -1 or end_location == -1:
+        return content
+
+    content_above_block = content[:start_location]
+    content_below_block = content[end_location:]
+
+    raw_block = content[start_location:end_location]
+    block_lines = raw_block.splitlines()
+
+    post_name = block_lines[0].replace("#{post-start}", "").strip()
+    block = "\n".join(block_lines[1:-1])
+
+    spec = load_specs_dict(source_dir)[post_name]
+    post = load_post(spec, source_dir)
+    expanded_block = apply_post_variables(block, post)
+
+    expanded_content = content_above_block + expanded_block + content_below_block
+    return expand_post_information(expanded_content, source_dir)
+
+
+def expand_post_block(content: str, source_dir: str) -> str:
+    # Determine where block starts and ends
+    start_location = content.find("#{post-block-start}")
+    end_location = content.find("#{post-block-end}") + len("#{post-block-end}")
     if start_location == -1 or end_location == -1:
         return content
 
