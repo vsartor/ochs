@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 from ochs.utils.fs import read_yaml
+from ochs.utils import log
 
 _AT_MASK = "__ochs_at_mask_"
 
@@ -16,6 +17,7 @@ def apply_global_variables(content: str, source_dir: str) -> str:
 
 
 def apply_variables(content: str, variables: dict[str, str]) -> str:
+    log.info(f"Applying variables: {variables}")
     content = content.replace("@@{", _AT_MASK)
     for name, value in variables.items():
         content = content.replace(f"@{{{name}}}", value)

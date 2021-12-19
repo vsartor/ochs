@@ -5,8 +5,7 @@ from ochs.builder.page import Page
 from ochs.builder.posts import expand_post_block, expand_post_information
 from ochs.builder.templates import get_template
 from ochs.builder.variables import apply_global_variables, apply_variables
-from ochs.utils import log
-from ochs.utils.fs import read_yaml, write
+from ochs.utils.fs import read_yaml
 
 
 class PageSpec(NamedTuple):

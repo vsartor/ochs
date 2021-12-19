@@ -7,7 +7,7 @@ from ochs.builder.page import Page
 from ochs.builder.templates import get_template
 from ochs.builder.variables import apply_global_variables, apply_variables
 from ochs.utils import log
-from ochs.utils.fs import read_md, read_yaml, write
+from ochs.utils.fs import read_md, read_yaml
 
 
 class PostSpec(NamedTuple):
@@ -41,11 +41,12 @@ def load_specs(source_dir: str) -> list[PostSpec]:
             date=date.fromisoformat(raw_spec["date"]),
             url=raw_spec["url"] if "unlisted" in raw_spec else f"posts/{raw_spec['url']}",
             unlisted="unlisted" in raw_spec,
-            variables=raw_spec["variables"],
+            variables=raw_spec.get("variables", dict()),
         )
         for raw_spec in read_yaml(f"{source_dir}/posts.yaml")
     ]
 
+    log.info("Finished loading post specs")
     return sorted(specs, key=lambda spec: spec.date, reverse=True)
 
 
