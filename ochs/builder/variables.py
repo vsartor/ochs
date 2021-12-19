@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 
 from ochs.utils import log
@@ -22,3 +23,10 @@ def apply_variables(content: str, variables: dict[str, str]) -> str:
     for name, value in variables.items():
         content = content.replace(f"@{{{name}}}", value)
     return content.replace(_AT_MASK, "@{")
+
+
+def check_unfilled_variables(content: str) -> None:
+    regexp_rule = r"@\{(.*?)\}"
+    matches = re.finditer(regexp_rule, content)
+    for match in matches:
+        log.error(f"Found non-expanded variable '{match.group(1)}'.")

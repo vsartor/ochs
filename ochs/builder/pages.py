@@ -4,7 +4,7 @@ from typing import NamedTuple
 from ochs.builder.page import Page
 from ochs.builder.posts import expand_post_block, expand_post_information
 from ochs.builder.templates import get_template
-from ochs.builder.variables import apply_global_variables, apply_variables
+from ochs.builder.variables import apply_global_variables, apply_variables, check_unfilled_variables
 from ochs.utils.fs import read_yaml
 
 
@@ -32,6 +32,7 @@ def load_page(source_dir: str, spec: PageSpec) -> Page:
     content = expand_post_information(content, source_dir)
     content = apply_global_variables(content, source_dir)
     content = apply_variables(content, spec.variables)
+    check_unfilled_variables(content)
     return Page(url=spec.url, content=content)
 
 

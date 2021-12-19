@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 from ochs.builder.page import Page
 from ochs.builder.templates import get_template
-from ochs.builder.variables import apply_global_variables, apply_variables
+from ochs.builder.variables import apply_global_variables, apply_variables, check_unfilled_variables
 from ochs.utils import log
 from ochs.utils.fs import read_md, read_yaml
 
@@ -70,6 +70,7 @@ def get_page(post: Post, source_dir: str) -> Page:
     content = apply_post_variables(content, post)
     content = apply_global_variables(content, source_dir)
     content = apply_variables(content, post.spec.variables)
+    check_unfilled_variables(content)
     return Page(url=post.spec.url, content=content)
 
 
