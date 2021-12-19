@@ -4,6 +4,7 @@ __pycache__
 .mypy_cache
 .tox
 .pytest_cache
+.vscode
 htmlcov
 .coverage
 coverage.xml
