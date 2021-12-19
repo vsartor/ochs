@@ -1,7 +1,7 @@
 from functools import lru_cache
 
-from ochs.utils.fs import read_yaml
 from ochs.utils import log
+from ochs.utils.fs import read_yaml
 
 _AT_MASK = "__ochs_at_mask_"
 

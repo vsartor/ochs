@@ -130,10 +130,24 @@ def expand_post_block(content: str, source_dir: str) -> str:
     return expanded_content
 
 
+def date_suffix_format(d: date) -> str:
+    suffix_map = {
+        1: "st",
+        2: "nd",
+        3: "rd",
+        21: "st",
+        22: "nd",
+        23: "rd",
+        31: "st",
+    }
+
+    return suffix_map.get(d.day, "th")
+
+
 def apply_post_variables(content: str, post: Post) -> str:
     date_instances = set(re.findall(r"#{post-date:[^}]+}", content))
     for date_instance in date_instances:
-        date_format = date_instance[12:-1]
+        date_format = date_instance[12:-1].replace("%s", date_suffix_format(post.spec.date))
         content = content.replace(date_instance, post.spec.date.strftime(date_format))
 
     return (
