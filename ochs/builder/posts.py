@@ -19,6 +19,7 @@ class PostSpec(NamedTuple):
     url: str
     unlisted: bool
     variables: dict[str, str]
+    coming_soon: bool
 
     def __hash__(self) -> int:
         return hash(self.name)
@@ -42,6 +43,7 @@ def load_specs(source_dir: str) -> list[PostSpec]:
             url=raw_spec["url"] if "unlisted" in raw_spec else f"posts/{raw_spec['url']}",
             unlisted="unlisted" in raw_spec,
             variables=raw_spec.get("variables", dict()),
+            coming_soon=date.fromisoformat(raw_spec["date"]) > date.today()
         )
         for raw_spec in read_yaml(f"{source_dir}/posts.yaml")
     ]
@@ -60,7 +62,7 @@ def load_post(spec: PostSpec, source_dir: str) -> Post:
     log.info(f"Reading post '{spec.name}.md'.")
     return Post(
         spec=spec,
-        preview=read_md(f"{source_dir}/previews/{spec.name}.md"),
+        preview=read_md(f"{source_dir}/previews/{spec.name}.md") if not spec.unlisted else "",
         content=read_md(f"{source_dir}/posts/{spec.name}.md"),
     )
 
@@ -157,6 +159,7 @@ def apply_post_variables(content: str, post: Post) -> str:
         .replace("#{post-url}", post.spec.url)
         .replace("#{post-preview}", post.preview)
         .replace("#{post-content}", post.content)
+        .replace("#{post-coming-soon}", "@{coming_soon}" if post.spec.coming_soon else "")
     )
 
 
