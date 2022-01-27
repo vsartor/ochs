@@ -1,6 +1,7 @@
 import re
 from functools import lru_cache
 
+from ochs.flags import flag
 from ochs.utils import log
 from ochs.utils.fs import read_yaml
 
@@ -9,7 +10,14 @@ _AT_MASK = "__ochs_at_mask_"
 
 @lru_cache(maxsize=None)
 def load_global_variables(source_dir: str) -> dict[str, str]:
-    return read_yaml(f"{source_dir}/variables.yaml")
+    global_variables = read_yaml(f"{source_dir}/variables.yaml")
+    for key, value in global_variables.items():
+        if isinstance(value, dict):
+            if flag.prod and "prod" in value:
+                global_variables[key] = value["prod"]
+            else:
+                global_variables[key] = value["default"]
+    return global_variables
 
 
 def apply_global_variables(content: str, source_dir: str) -> str:

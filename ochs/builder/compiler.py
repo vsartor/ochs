@@ -3,11 +3,15 @@ import shutil
 
 from ochs.builder.pages import build_pages
 from ochs.builder.posts import build_posts
+from ochs.flags import flag
 from ochs.utils import log
 from ochs.utils.fs import is_or_mkdir
 
 
 def compile_source(source_dir: str, target_dir: str) -> bool:
+    if flag.prod:
+        log.info("prod flag is enabled")
+
     if not os.path.isdir(source_dir):
         log.error(f"Source directory '{source_dir}' is not valid.")
         return False

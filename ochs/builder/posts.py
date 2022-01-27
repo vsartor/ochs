@@ -43,7 +43,7 @@ def load_specs(source_dir: str) -> list[PostSpec]:
             url=raw_spec["url"] if "unlisted" in raw_spec else f"posts/{raw_spec['url']}",
             unlisted="unlisted" in raw_spec,
             variables=raw_spec.get("variables", dict()),
-            coming_soon=date.fromisoformat(raw_spec["date"]) > date.today()
+            coming_soon=date.fromisoformat(raw_spec["date"]) > date.today(),
         )
         for raw_spec in read_yaml(f"{source_dir}/posts.yaml")
     ]
