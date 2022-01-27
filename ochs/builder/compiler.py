@@ -22,6 +22,15 @@ def compile_source(source_dir: str, target_dir: str) -> bool:
     build_pages(source_dir, target_dir)
     build_posts(source_dir, target_dir)
 
+    if flag.prod:
+        log.info(f"Zipping the output.")
+
+        shutil.make_archive(
+            base_name=os.path.basename(target_dir),
+            format="zip",
+            root_dir=target_dir,
+        )
+
     return True
 
 
